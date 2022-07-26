@@ -4,6 +4,25 @@ const emailFeedbackArea = document.querySelector(".email_invalid_feedback");
 const usernameSuccessOutput = document.querySelector(".usernameSuccessOutput");
 const emailField = document.querySelector("#emailField");
 
+const showPasswordToggle = document.querySelector(".showPasswordToggle");
+const passwordField = document.querySelector("#passwordField");
+
+
+showPasswordToggle.addEventListener("click", (e) => {
+    if (showPasswordToggle.textContent==="SHOW")
+    {
+        showPasswordToggle.textContent = "HIDE"; 
+        passwordField.setAttribute("type", "text");
+    }
+    else 
+    {
+        showPasswordToggle.textContent = "SHOW"; 
+        passwordField.setAttribute("type", "password"); 
+    }
+});
+
+
+
 emailField.addEventListener("keyup", (e) => {
     const emailVal = e.target.value; 
     emailField.classList.remove("is-invalid"); 
