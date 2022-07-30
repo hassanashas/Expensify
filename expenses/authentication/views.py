@@ -8,6 +8,14 @@ from django.contrib import messages
 from validate_email import validate_email
 from django.core.mail import EmailMessage
 
+from django.utils.encoding import force_bytes, DjangoUnicodeDecodeError
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.contrib.sites.shortcuts import get_current_site
+from django.urls import reverse
+
+# import Token Generator 
+from .utils import token_generator
+
 class EmailValidationView(View):
     def post(self, request):
         data = json.loads(request.body)
@@ -67,8 +75,17 @@ class RegistrationView(View):
                 user.save() 
 
                 # Send Email For Verification 
+                uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
+
+
+                domain = get_current_site(request).domain
+                link = reverse('activate', kwargs={'uidb64': uidb64, 'token': token_generator.make_token(user)})
+
+                activate_url = 'http://' + domain + link
+
                 email_subject = "Welcome to Expensify! Please Activate Your Account"
-                email_body = "Just Testing"
+                email_body = "Hello " + user.username + "!\n\n"
+                email_body += "We Welcome you to Expensify! Please Activate your Account using the Following Link: " + activate_url
                 email = EmailMessage(
                     email_subject,
                     email_body,
@@ -84,3 +101,10 @@ class RegistrationView(View):
         return render(request, 'authentication/register.html')
 
         
+class VerificationVIew(View):
+    def get(self, request, uidb64, token):
+        return render(request, 'login')
+
+class LoginView(View):
+    def get(self, request):
+        return render(request, 'authentication/login.html')
