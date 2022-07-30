@@ -75,7 +75,7 @@ class RegistrationView(View):
                     'noreply@semicolon.com',
                     [email],
                 )
-                email.send(fail_silently=False)
+                email.send(fail_silently=True)
                 messages.success(request, 'Your Account has been created successfully')
                 return render(request, 'authentication/register.html')
 
