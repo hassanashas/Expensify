@@ -6,6 +6,7 @@ from django.http import JsonResponse
 from django.contrib.auth.models import User
 from django.contrib import messages
 from validate_email import validate_email
+from django.core.mail import EmailMessage
 
 class EmailValidationView(View):
     def post(self, request):
@@ -62,8 +63,19 @@ class RegistrationView(View):
 
                 user = User.objects.create_user(username=username, email=email)
                 user.set_password(password)
+                user.is_active = False
                 user.save() 
 
+                # Send Email For Verification 
+                email_subject = "Welcome to Expensify! Please Activate Your Account"
+                email_body = "Just Testing"
+                email = EmailMessage(
+                    email_subject,
+                    email_body,
+                    'noreply@semicolon.com',
+                    [email],
+                )
+                email.send(fail_silently=False)
                 messages.success(request, 'Your Account has been created successfully')
                 return render(request, 'authentication/register.html')
 
