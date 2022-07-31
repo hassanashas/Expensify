@@ -8,7 +8,7 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{% url 'exp' %}">Expenses</a></li>
-        <li class="breadcrumb-item active" aria-current="page">My Expense</li>
+        <li class="breadcrumb-item active" aria-current="page">Edit Expense</li>
         </ol>
     </nav>
 
@@ -18,33 +18,40 @@
             <div class="card-header"></div>
 
             <div class="card-body">
-            <form action="{% url 'add_expense' %}" method="post">
+            <form action="{% url 'edit_expense' expense.id %}" method="post">
                 {% include 'partials/__messages.html' %}
                 {% csrf_token %}
                 <div class="form-group">
                     <label for="">Amount</label>
-                    <input type="number" class="form-control form-control-sm" name="amount" value="{{values.amount}}"/>
+                    <input type="number" class="form-control form-control-sm" name="amount" value="{{expense.amount}}"/>
                 </div>
                 <div class="form-group">
                     <label for="">Description</label>
-                    <input type="text" class="form-control-sm form-control" name="description" value="{{values.description}}"/>
+                    <input type="text" class="form-control-sm form-control" name="description" value="{{expense.description}}"/>
                 </div>
                 <div class="form-group">
                     <label for="">Category</label>
                     <select name="category" class = "form-control">
-                        {% for category in cateogries %}
+                        {% for category in categories %}
+                        {% if category.name == expense.category %}
+                        <option selected value="{{category.name}}">
+                            {{category.name}}
+                        </option>
+                        {% else %}
                         <option value="{{category.name}}">
                             {{category.name}}
                         </option>
+                        {% endif %}
+                        
                         {% endfor %}
                         
                     </select>
                 </div>
                 <div class="form-group">
                     <label for="">Date</label>
-                    <input type="date" class="form-control-sm form-control" name="date" value="{{values.date}}"/>
+                    <input type="date" class="form-control-sm form-control" name="date" value="{{expense.date}}"/>
                 </div>
-                <input type="submit" value="Submit" class="btn btn-primary btn-primary-sm"/>
+                <input type="submit" value="Update Expense" class="mt-3 btn btn-primary btn-primary-sm"/>
             </form>
 
                 

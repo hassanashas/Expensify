@@ -1,8 +1,79 @@
-from django.shortcuts import render
-
+from django.shortcuts import render, redirect
+from .models import Category, Expense
+from django.contrib import messages
 
 def index(request):
-    return render(request, 'expenses/index.html')
+    
+    categories = Category.objects.all()
+    expenses = Expense.objects.filter(owner=request.user)
+    context = {
+        'cateogries': categories,
+        'expenses': expenses
+    }
+    return render(request, 'expenses/index.html', context)
 
 def add_expense(request):
-    return render(request, 'expenses/index.html')
+
+    categories = Category.objects.all()
+    context = {
+        'cateogries': categories,
+        'values': request.POST
+    }
+
+    if request.method == "POST":
+
+        amount = request.POST['amount']
+        description = request.POST['description']
+        category = request.POST['category']
+        date = request.POST['date']
+
+        if not amount:
+            messages.warning(request, "Amount can not be Empty")
+            return render(request, 'expenses/add_expense.html', context)
+
+        if not description:
+            messages.warning(request, "Description can not be Empty")
+            return render(request, 'expenses/add_expense.html', context)
+
+        Expense.objects.create(amount=amount, description=description, category=category, date=date, owner=request.user)
+        messages.success(request, "Expense has been Successfully Added")
+        return redirect('exp')
+
+
+    return render(request, 'expenses/add_expense.html', context)
+
+
+def edit_expense(request, id):
+    expense = Expense.objects.get(pk=id)
+    categories = Category.objects.all()
+    context = {
+        'expense': expense,
+        'categories': categories
+    }
+    if request.method == "GET":
+        
+        return render(request, 'expenses/edit_expense.html', context)
+
+    else:
+
+        amount = request.POST['amount']
+        description = request.POST['description']
+        category = request.POST['category']
+        date = request.POST['date']
+
+        if not amount:
+            messages.warning(request, "Amount can not be Empty")
+            return render(request, 'expenses/edit_expense.html', context)
+
+        if not description:
+            messages.warning(request, "Description can not be Empty")
+            return render(request, 'expenses/edit_expense.html', context)
+        
+        expense.amount = amount 
+        expense.description = description 
+        expense.category = category 
+        expense.date = date 
+        expense.save() 
+
+        messages.success(request, "Expense has been Saved Successfully")
+        return redirect('exp')
