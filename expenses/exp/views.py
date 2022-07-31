@@ -3,6 +3,10 @@ from .models import Category, Expense
 from django.contrib import messages
 from django.core.paginator import Paginator
 
+
+def search_expenses(request):
+    pass
+
 def index(request):
     
     categories = Category.objects.all()
