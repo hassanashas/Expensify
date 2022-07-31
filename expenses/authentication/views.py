@@ -13,6 +13,8 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
 
+from django.contrib import auth # For the Authentication of user on login 
+
 # import Token Generator 
 from .utils import token_generator
 
@@ -85,7 +87,7 @@ class RegistrationView(View):
 
                 email_subject = "Welcome to Expensify! Please Activate Your Account"
                 email_body = "Hello " + user.username + "!\n\n"
-                email_body += "We Welcome you to Expensify! Please Activate your Account using the Following Link: " + activate_url
+                email_body += "We Welcome you to Expensify! I am learning Django. Please Activate your Account using the Following Link: " + activate_url
                 email = EmailMessage(
                     email_subject,
                     email_body,
@@ -121,3 +123,33 @@ class VerificationVIew(View):
 class LoginView(View):
     def get(self, request):
         return render(request, 'authentication/login.html')
+
+    def post(self, request):
+        
+        username = request.POST['username']
+        password = request.POST['password']
+
+        if username and password:
+
+            user = auth.authenticate(username=username, password=password)
+            
+            if user:
+                if user.is_active:
+                    auth.login(request, user)
+                    messages.success(request, user.username + "You are logged in successfully")
+                    return redirect('exp')
+
+                messages.erro(request, "Your Account is not Active. Please check your Email")
+                return render(request, 'authentication/login.html')
+            messages.error(request, "Invalid Credentials. Please Try Again")
+            return render(request, 'authentication/login.html')
+                
+        messages.error(request, "All Fields are Required.")
+        return render(request, 'authentication/login.html')
+
+
+class LogoutView(View):
+    def post(self, request):
+        auth.logout(request)
+        messages.success(request, "You have successfully Logged Out")
+        return redirect('login')

@@ -1,15 +1,21 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>Expenses Home</h1>
 
-    <ul class = "list-group">
+    <div class="container">
+        {% include 'partials/__messages.html' %}
+        <h1>Expenses Home</h1>
 
-        <li class = 'list-group-item'>Both Good</li>
-        <li class = 'list-group-item'>Both Good</li>
-        <li class = 'list-group-item'>Both Good</li>
-        <li class = 'list-group-item'>Both Good</li>
-        <li class = 'list-group-item'>Both Good</li>
+        <ul class = "list-group">
 
-    </ul>
+            <li class = 'list-group-item'>Both Good</li>
+            <li class = 'list-group-item'>Both Good</li>
+            <li class = 'list-group-item'>Both Good</li>
+            <li class = 'list-group-item'>Both Good</li>
+            <li class = 'list-group-item'>Both Good</li>
+
+        </ul>
+    </div>
+
+    
 {% endblock  %}
