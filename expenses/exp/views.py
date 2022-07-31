@@ -1,14 +1,18 @@
 from django.shortcuts import render, redirect
 from .models import Category, Expense
 from django.contrib import messages
+from django.core.paginator import Paginator
 
 def index(request):
     
     categories = Category.objects.all()
     expenses = Expense.objects.filter(owner=request.user)
+    paginator = Paginator(expenses, 2)
+    page_number = request.GET.get('page')
+    page_obj = Paginator.get_page(paginator, page_number)
     context = {
-        'cateogries': categories,
-        'expenses': expenses
+        'expenses': expenses,
+        'page_obj': page_obj,
     }
     return render(request, 'expenses/index.html', context)
 
